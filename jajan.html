@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>Jajan - ARFA History Permanen</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Poppins',sans-serif}
+body{background:#f1f5f9;padding:12px;padding-bottom:80px}
+.container{max-width:480px;margin:0 auto}
+.card{background:#fff;padding:16px;border-radius:16px;border:1px solid #e2e8f0;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+h2{font-size:14px;color:#0f3057;text-align:center;font-weight:700}
+label{font-size:10px;font-weight:700;color:#334155;display:block;margin:10px 0 5px;text-transform:uppercase}
+input,select{width:100%;padding:12px;border:1.8px solid #cbd5e1;border-radius:12px;font-size:13px;background:#fff;outline:none}
+input:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{width:100%;padding:12px;border:none;border-radius:12px;font-weight:700;cursor:pointer;font-size:11px;margin-top:8px}
+.btn-blue{background:#0f3057;color:#fff}.btn-green{background:#10b981;color:#fff}.btn-red{background:#fee2e2;color:#dc2626;border:1px solid #fecaca}.btn-gray{background:#e2e8f0;color:#334155}
+.total-box{background:#0f3057;color:#fff;padding:14px;border-radius:12px;display:flex;justify-content:space-between;margin-top:12px}
+.item{display:flex;justify-content:space-between;align-items:center;padding:12px;background:#f8fafc;border-radius:12px;margin-top:8px;border:1px solid #e2e8f0}
+.badge{font-size:9px;padding:3px 8px;border-radius:20px;background:#dbeafe;color:#0f3057;font-weight:700}
+.riwayat-group{background:#fff;border:1px solid #e2e8f0;border-radius:12px;margin-top:8px;overflow:hidden}
+.riwayat-head{padding:10px 12px;background:#f8fafc;display:flex;justify-content:space-between;cursor:pointer;font-size:11px;font-weight:700}
+.riwayat-body{padding:8px;display:none}.riwayat-body.open{display:block}
+.stat2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.stat2 div{background:#f8fafc;border:1px solid #e2e8f0;padding:8px;border-radius:10px;text-align:center;font-size:11px}
+.search-wrap{position:relative}
+.suggest{position:absolute;top:100%;left:0;right:0;background:#fff;border:1.5px solid #0f3057;border-radius:12px;margin-top:6px;z-index:20;max-height:200px;overflow:auto;box-shadow:0 10px 30px rgba(0,0,0,.15);display:none}
+.suggest.show{display:block}
+.suggest-item{padding:10px 12px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;border-bottom:1px solid #f1f5f9;font-size:12px}
+.suggest-item:hover{background:#f1f5f9}
+.chip{display:inline-block;padding:2px 8px;border-radius:20px;background:#fef9c3;color:#854d0e;font-size:10px;font-weight:700;margin-left:6px}
+.permanent-info{background:#eff6ff;border:1px solid #bfdbfe;padding:8px 10px;border-radius:10px;font-size:10px;color:#1e40af;margin-top:8px;text-align:center}
+.status{font-size:10px;padding:6px 10px;border-radius:20px;text-align:center;margin-top:6px;font-weight:700}
+.status-ok{background:#dcfce7;color:#166534;border:1px solid #bbf7d0}
+.status-err{background:#fee2e2;color:#991b1b;border:1px solid #fecaca}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="card">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+<button onclick="location.href='./index.html'" class="btn-gray" style="width:auto;padding:8px 12px;margin:0">← Kembali</button>
+<div id="conn" class="status">Menghubungkan...</div>
+</div>
+<h2>💰 FORM JAJAN HARIAN</h2>
+<div class="permanent-info">🔒 Firebase Aktif • History Permanen • xeniasp62-art.github.io/Warung-</div>
+<div class="grid2" style="margin-top:12px">
+<div><label>Tanggal</label><input type="date" id="tgl"></div>
+<div><label>Kategori</label><select id="kategori"><option>Makan</option><option>Minum</option><option>Snack</option><option>Transport</option><option>Lain</option></select></div>
+</div>
+<label>Nama Jajan (Searchable Permanen)</label>
+<div class="search-wrap">
+<input id="nama" placeholder="Ketik: Kopi, Seblak..." autocomplete="off" oninput="onNamaInput();hitung()">
+<div id="suggestNama" class="suggest"></div>
+</div>
+<div class="grid2">
+<div><label>Jumlah</label><input type="number" id="qty" value="1" oninput="hitung()"></div>
+<div><label>Harga Satuan</label><div class="search-wrap"><input type="number" id="harga" placeholder="10000" oninput="hitung();onHargaInput()"><div id="suggestHarga" class="suggest"></div></div></div>
+</div>
+<div style="background:#fef9c3;padding:10px;border-radius:10px;margin-top:10px;text-align:center;font-size:12px">Subtotal: <b id="subtotal">Rp 0</b> <span id="infoHarga" class="chip" style="display:none"></span></div>
+<button class="btn btn-blue" onclick="tambah()">+ Tambah Jajan ke Firebase</button>
+<div class="total-box"><span>TOTAL HARI INI</span><b id="totalHari">Rp 0</b></div>
+<div style="background:#dcfce7;padding:8px;border-radius:10px;margin-top:8px;font-size:11px;text-align:center">Bulan ini: <b id="totalBulan">Rp 0</b> • History: <b id="totalHistory">0</b> permanen</div>
+<h3 style="font-size:11px;margin:14px 0 8px;color:#0f3057">Jajan Hari Ini</h3>
+<div id="list"></div>
+<div class="grid2"><button class="btn btn-gray" onclick="toggleRiwayat()">📂 Lihat Riwayat</button><button class="btn btn-red" onclick="hapusSemua()">Hapus Hari Ini</button></div>
+</div>
+
+<div id="cardRiwayat" class="card" style="display:none">
+<h2>📅 RIWAYAT JAJAN</h2>
+<div class="grid2" style="margin-top:10px"><div><label>Filter Bulan</label><input type="month" id="filterBulan"></div><div><label>Cari Nama & Harga</label><input id="cari" placeholder="Kopi 15000..." oninput="renderRiwayat()"></div></div>
+<div class="stat2"><div><small>Total Bulan</small><b id="rTotalBulan">Rp 0</b></div><div><small>Rata2 / Hari</small><b id="rRata">Rp 0</b></div></div>
+<div id="riwayatList" style="margin-top:10px"></div>
+<div class="grid2" style="margin-top:10px"><button class="btn btn-green" onclick="exportCSV()">📥 Export Excel</button><button class="btn btn-red" onclick="hapusBulanFilter()">Hapus Bulan Ini</button></div>
+<div class="grid2"><button class="btn btn-gray" onclick="toggleRiwayat()">Tutup Riwayat</button><button class="btn btn-gray" style="background:#fef9c3" onclick="hapusHistoryPermanen()">🗑️ Hapus History Permanen</button></div>
+</div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyDJcLeV1k7at7RZPjOma8Feast25yCJEo",
+  authDomain: "warung-c1a19.firebaseapp.com",
+  databaseURL: "https://warung-c1a19-default-rtdb.firebaseio.com",
+  projectId: "warung-c1a19",
+  storageBucket: "warung-c1a19.firebasestorage.app",
+  messagingSenderId: "187813180899",
+  appId: "1:187813180899:web:432cfda5abfa0b5fe49cd6"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+let data = [];
+let history = JSON.parse(localStorage.getItem('jajan_history') || '{}');
+document.getElementById('tgl').valueAsDate = new Date();
+document.getElementById('filterBulan').value = new Date().toISOString().slice(0,7);
+
+function formatRp(n){return 'Rp '+Number(n).toLocaleString('id-ID')}
+function hitung(){let q=+document.getElementById('qty').value||0;let h=+document.getElementById('harga').value||0;document.getElementById('subtotal').innerText=formatRp(q*h);return q*h}
+function saveHistory(nama,harga,kat){
+  let key=nama.toLowerCase().trim();
+  if(!history[key]){history[key]={nama,harga,kat,count:1,last:Date.now()}} else {history[key].count++;history[key].harga=harga;history[key].kat=kat;history[key].last=Date.now()}
+  localStorage.setItem('jajan_history', JSON.stringify(history));
+  db.ref('jajan_history/'+key.replace(/[^a-z0-9]/g,'_')).set(history[key]);
+}
+function getHistoryList(){return Object.values(history).sort((a,b)=>b.last-a.last)}
+function onNamaInput(){
+  const q=document.getElementById('nama').value.toLowerCase().trim();
+  const box=document.getElementById('suggestNama');
+  if(!q){box.classList.remove('show');return}
+  const list=getHistoryList().filter(u=>u.nama.toLowerCase().includes(q)).slice(0,10);
+  if(!list.length){box.classList.remove('show');return}
+  box.innerHTML=list.map(u=>`<div class="suggest-item" onclick="pilihNama('${u.nama.replace(/'/g,"\\'")}',${u.harga},'${u.kat}')"><div><b>${u.nama}</b> <span class="chip">${u.kat}</span><br><small>🔒 ${u.count}x • ${formatRp(u.harga)}</small></div><div>${formatRp(u.harga)}</div></div>`).join('');
+  box.classList.add('show');
+}
+function pilihNama(nama,harga,kat){document.getElementById('nama').value=nama;document.getElementById('harga').value=harga;document.getElementById('kategori').value=kat;document.getElementById('suggestNama').classList.remove('show');document.getElementById('infoHarga').style.display='inline-block';document.getElementById('infoHarga').innerText=`🔒 ${formatRp(harga)}`;hitung()}
+function onHargaInput(){
+  const q=document.getElementById('harga').value.trim();
+  const box=document.getElementById('suggestHarga');
+  if(!q){box.classList.remove('show');return}
+  const list=getHistoryList().filter(u=>String(u.harga).includes(q)).slice(0,8);
+  if(!list.length){box.classList.remove('show');return}
+  box.innerHTML=list.map(u=>`<div class="suggest-item" onclick="pilihHarga(${u.harga})"><div><b>${formatRp(u.harga)}</b><br><small>${u.nama}</small></div></div>`).join('');
+  box.classList.add('show');
+}
+function pilihHarga(h){document.getElementById('harga').value=h;document.getElementById('suggestHarga').classList.remove('show');hitung()}
+document.addEventListener('click',e=>{if(!e.target.closest('.search-wrap')){document.getElementById('suggestNama').classList.remove('show');document.getElementById('suggestHarga').classList.remove('show')}});
+
+function tambah(){
+  let tgl=document.getElementById('tgl').value;
+  let nama=document.getElementById('nama').value.trim();
+  let kat=document.getElementById('kategori').value;
+  let qty=+document.getElementById('qty').value||1;
+  let harga=+document.getElementById('harga').value||0;
+  if(!nama||!harga){alert('Isi nama & harga dulu bos');return}
+  saveHistory(nama,harga,kat);
+  db.ref('jajan_data').push({tgl,nama,kat,qty,harga,total:qty*harga,createdAt:Date.now()})
+  .then(()=>{document.getElementById('nama').value='';document.getElementById('harga').value='';document.getElementById('infoHarga').style.display='none';hitung();})
+  .catch(e=>alert('Gagal Firebase: '+e.message+'\nCek Rules di Firebase Console'));
+}
+function hapus(id){if(!confirm('Hapus?'))return;db.ref('jajan_data/'+id).remove()}
+function hapusSemua(){if(!confirm('Hapus hari ini? History tetap aman'))return;let t=document.getElementById('tgl').value;data.filter(d=>d.tgl===t).forEach(d=>db.ref('jajan_data/'+d.id).remove())}
+function hapusBulanFilter(){if(!confirm('Hapus bulan ini? History tetap aman'))return;let b=document.getElementById('filterBulan').value;data.filter(d=>d.tgl.startsWith(b)).forEach(d=>db.ref('jajan_data/'+d.id).remove())}
+function hapusHistoryPermanen(){if(!confirm('Hapus SEMUA history permanen?'))return;history={};localStorage.setItem('jajan_history',JSON.stringify(history));db.ref('jajan_history').remove();render()}
+
+function render(){
+  let t=document.getElementById('tgl').value;
+  let listHari=data.filter(d=>d.tgl===t);
+  let totalHari=listHari.reduce((a,b)=>a+b.total,0);
+  let bulan=t.slice(0,7);
+  let totalBulan=data.filter(d=>d.tgl.startsWith(bulan)).reduce((a,b)=>a+b.total,0);
+  document.getElementById('totalHari').innerText=formatRp(totalHari);
+  document.getElementById('totalBulan').innerText=formatRp(totalBulan);
+  document.getElementById('totalHistory').innerText=Object.keys(history).length;
+  let h='';[...listHari].reverse().forEach(d=>{
+    h+=`<div class="item"><div><b>${d.nama}</b> <span class="badge">${d.kat}</span><br><small>${d.qty}x ${formatRp(d.harga)} = ${formatRp(d.total)}</small></div><button onclick="hapus('${d.id}')" style="background:#fee2e2;border:none;width:32px;height:32px;border-radius:8px">✕</button></div>`
+  });
+  document.getElementById('list').innerHTML=h||'<div style="text-align:center;font-size:11px;color:#94a3b8;margin-top:10px">Belum ada jajan hari ini</div>';
+}
+function toggleRiwayat(){let c=document.getElementById('cardRiwayat');c.style.display=c.style.display==='none'?'block':'none';if(c.style.display==='block')renderRiwayat()}
+function renderRiwayat(){
+  let bulan=document.getElementById('filterBulan').value;
+  let cari=document.getElementById('cari').value.toLowerCase();
+  let filtered=data.filter(d=>d.tgl.startsWith(bulan));
+  if(cari) filtered=filtered.filter(d=>(d.nama.toLowerCase().includes(cari)||String(d.harga).includes(cari)));
+  filtered.sort((a,b)=>b.tgl.localeCompare(a.tgl));
+  let total=filtered.reduce((a,b)=>a+b.total,0);
+  let hariUnik=[...new Set(filtered.map(d=>d.tgl))].length||1;
+  document.getElementById('rTotalBulan').innerText=formatRp(total);
+  document.getElementById('rRata').innerText=formatRp(Math.round(total/hariUnik));
+  let groups={};filtered.forEach(d=>{if(!groups[d.tgl])groups[d.tgl]=[];groups[d.tgl].push(d)});
+  let html='';Object.keys(groups).sort().reverse().forEach(tgl=>{
+    let items=groups[tgl];let tot=items.reduce((a,b)=>a+b.total,0);
+    html+=`<div class="riwayat-group"><div class="riwayat-head" onclick="this.nextElementSibling.classList.toggle('open')"><span>📅 ${tgl} - ${items.length} item</span><span>${formatRp(tot)} ▼</span></div><div class="riwayat-body">`+items.map(d=>`<div class="item" style="margin-top:6px"><div><b>${d.nama}</b> <span class="badge">${d.kat}</span><br><small>${d.qty}x ${formatRp(d.harga)}</small></div><div><small>${formatRp(d.total)}</small> <button onclick="hapus('${d.id}')" style="background:#fee2e2;border:none;border-radius:6px;padding:4px 8px;margin-left:6px">✕</button></div></div>`).join('')+`</div></div>`;
+  });
+  document.getElementById('riwayatList').innerHTML=html||'<div style="text-align:center;color:#94a3b8;font-size:11px;margin-top:10px">Tidak ada data bulan ini</div>';
+}
+function exportCSV(){let bulan=document.getElementById('filterBulan').value;let filtered=data.filter(d=>d.tgl.startsWith(bulan));let csv='Tanggal,Nama,Kategori,Qty,Harga,Total\n'+filtered.map(d=>`${d.tgl},"${d.nama}",${d.kat},${d.qty},${d.harga},${d.total}`).join('\n');let blob=new Blob([csv],{type:'text/csv'});let url=URL.createObjectURL(blob);let a=document.createElement('a');a.href=url;a.download=`jajan-${bulan}.csv`;a.click();}
+document.getElementById('tgl').addEventListener('change',render);
+document.getElementById('filterBulan').addEventListener('change',renderRiwayat);
+
+db.ref('jajan_data').on('value', snap=>{
+  const val=snap.val()||{};
+  data=Object.entries(val).map(([id,v])=>({id,...v}));
+  render();renderRiwayat();
+  document.getElementById('conn').innerText='● Firebase OK ('+data.length+')';
+  document.getElementById('conn').className='status status-ok';
+}, err=>{
+  document.getElementById('conn').innerText='❌ '+err.message;
+  document.getElementById('conn').className='status status-err';
+});
+db.ref('jajan_history').on('value', snap=>{
+  const val=snap.val()||{};
+  Object.values(val).forEach(v=>{
+    let key=v.nama.toLowerCase().trim();
+    if(!history[key] || v.last>history[key].last) history[key]=v;
+  });
+  localStorage.setItem('jajan_history', JSON.stringify(history));
+  render();
+});
+db.ref('.info/connected').on('value', s=>{
+  if(s.val()!==true){
+    document.getElementById('conn').innerText='○ Offline, cek Rules & Authorized Domain';
+    document.getElementById('conn').className='status';
+  }
+});
+hitung();
+</script>
+</body>
+</html>

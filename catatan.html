@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>CATATAN HARIAN - ARFA</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:'Poppins',sans-serif;background:#f1f5f9}
+.container{max-width:480px;margin:0 auto;padding:12px}
+.card{background:#fff;border-radius:18px;padding:14px;box-shadow:0 6px 20px rgba(0,0,0,.07);margin-bottom:12px}
+input,select,textarea{width:100%;padding:12px;border:2px solid #e2e8f0;border-radius:12px;font-family:'Poppins',sans-serif;font-size:13px;margin-bottom:8px;background:#f8fafc}
+label{font-size:11px;font-weight:700;color:#64748b}
+.btn{width:100%;padding:13px;border:none;border-radius:12px;font-weight:800;cursor:pointer;font-size:14px}
+.btn-simpan{background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff}
+.chip{display:inline-block;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:800;color:#fff}
+.item{display:flex;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid #f1f5f9}
+.item:last-child{border:none}
+.hapus{background:none;border:none;color:#ef4444;cursor:pointer}
+.total{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.box{border-radius:14px;padding:12px;color:#fff}
+.box b{display:block;font-size:16px}
+.box span{font-size:10px;opacity:.9}
+.filter{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}
+.filter button{white-space:nowrap;padding:8px 12px;border-radius:20px;border:2px solid #dbeafe;background:#fff;font-weight:700;font-size:11px;cursor:pointer;color:#2563eb}
+.filter button.on{background:#2563eb;color:#fff}
+</style>
+</head>
+<body>
+<div class="container">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin:6px 0 12px">
+    <h2 style="margin:0;color:#1e3a8a;font-size:18px">📒 Catatan Harian</h2>
+    <button onclick="location.href='index.html'" style="border:none;background:#fff;padding:8px 12px;border-radius:10px;font-weight:700;color:#2563eb">⬅️ Toko</button>
+  </div>
+
+  <!-- TOTAL -->
+  <div class="total">
+    <div class="box" style="background:#ef4444"><span>HUTANG BELUM LUNAS</span><b id="totHutang">Rp 0</b><span id="jmlHutang">0 orang</span></div>
+    <div class="box" style="background:#10b981"><span>PIUTANG BELUM DIBAYAR</span><b id="totPiutang">Rp 0</b><span id="jmlPiutang">0 orang</span></div>
+  </div>
+  <p style="font-size:11px;color:#64748b;text-align:center;margin:10px 0 0">Hutang = kita pinjam / belum bayar &nbsp;•&nbsp; Piutang = orang pinjam ke kita</p>
+
+  <!-- FORM -->
+  <div class="card" style="margin-top:12px">
+    <label>Tanggal</label>
+    <input type="date" id="fTanggal">
+    <label>Jenis Catatan</label>
+    <select id="fJenis">
+      <option value="kegiatan">📝 Kegiatan</option>
+      <option value="hutang">🔴 Hutang - Saya berhutang</option>
+      <option value="bayar_hutang">✅ Bayar Hutang - Saya bayar</option>
+      <option value="piutang">🟢 Piutang - Orang berhutang ke saya</option>
+      <option value="bayar_piutang">💰 Bayaran Piutang - Orang bayar ke saya</option>
+    </select>
+    <label>Nama Orang / Judul</label>
+    <input id="fNama" placeholder="cth: Bu Siti, Warung, Beli beras...">
+    <label>Keterangan</label>
+    <textarea id="fKet" rows="2" placeholder="cth: Pinjam buat modal, janji bayar Jumat..."></textarea>
+    <label>Jumlah (Rp) - kosongkan kalau cuma kegiatan</label>
+    <input type="number" id="fJumlah" placeholder="0">
+    <button class="btn btn-simpan" id="btnSimpan">💾 SIMPAN CATATAN</button>
+  </div>
+
+  <!-- FILTER -->
+  <div class="filter" id="filterJenis">
+    <button data-f="semua" class="on">Semua</button>
+    <button data-f="kegiatan">Kegiatan</button>
+    <button data-f="hutang">Hutang</button>
+    <button data-f="bayar_hutang">Bayar Hutang</button>
+    <button data-f="piutang">Piutang</button>
+    <button data-f="bayar_piutang">Bayar Piutang</button>
+  </div>
+  <input id="cari" placeholder="🔍 Cari nama / keterangan..." style="margin-top:8px">
+
+  <!-- LIST -->
+  <div class="card" id="list"><p style="text-align:center;color:#94a3b8;font-size:12px">Memuat...</p></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, push, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+const firebaseConfig={apiKey:"AIzaSyDd0s73-qW2uiOlBWR-afybFZzMafCHeSo",authDomain:"arfa-c7dee.firebaseapp.com",databaseURL:"https://arfa-c7dee-default-rtdb.firebaseio.com",projectId:"arfa-c7dee"};
+const app=initializeApp(firebaseConfig); const db=getDatabase(app);
+
+const JENIS={
+  kegiatan:{label:"Kegiatan",warna:"#2563eb",icon:"📝"},
+  hutang:{label:"Hutang",warna:"#ef4444",icon:"🔴"},
+  bayar_hutang:{label:"Bayar Hutang",warna:"#f59e0b",icon:"✅"},
+  piutang:{label:"Piutang",warna:"#10b981",icon:"🟢"},
+  bayar_piutang:{label:"Bayar Piutang",warna:"#06b6d4",icon:"💰"}
+};
+const rupiah=n=>"Rp "+Number(n||0).toLocaleString("id-ID");
+document.getElementById("fTanggal").value=new Date().toISOString().slice(0,10);
+
+let semua=[], filterAktif="semua";
+document.querySelectorAll("#filterJenis button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("#filterJenis button").forEach(x=>x.classList.remove("on"));
+  b.classList.add("on"); filterAktif=b.dataset.f; tampil();
+});
+document.getElementById("cari").oninput=tampil;
+
+document.getElementById("btnSimpan").onclick=async()=>{
+  const nama=document.getElementById("fNama").value.trim();
+  if(!nama){ alert("Isi nama / judul dulu bos"); return; }
+  const jenis=document.getElementById("fJenis").value;
+  const data={tanggal:document.getElementById("fTanggal").value, jenis, nama,
+    ket:document.getElementById("fKet").value.trim(),
+    jumlah:Number(document.getElementById("fJumlah").value)||0,
+    waktu:Date.now()};
+  await set(push(ref(db,"/catatan_harian")), data);
+  document.getElementById("fNama").value=""; document.getElementById("fKet").value=""; document.getElementById("fJumlah").value="";
+  alert("Tersimpan ✅");
+};
+
+onValue(ref(db,"/catatan_harian"), snap=>{
+  semua=snap.exists()?Object.entries(snap.val()).map(([id,v])=>({id,...v})).sort((a,b)=>b.waktu-a.waktu):[];
+  tampil();
+});
+
+function tampil(){
+    const cari=(document.getElementById("cari").value||"").toLowerCase();
+  let list=semua.filter(x=>(filterAktif==="semua"||x.jenis===filterAktif) && ((x.nama+" "+(x.ket||"")).toLowerCase().includes(cari)));
+
+  // Total: hutang - bayar_hutang, piutang - bayar_piutang
+  let h=0,p=0, hOrang=new Set(), pOrang=new Set();
+  semua.forEach(x=>{
+    if(x.jenis==="hutang"){h+=x.jumlah; hOrang.add(x.nama)}
+    if(x.jenis==="bayar_hutang"){h-=x.jumlah}
+    if(x.jenis==="piutang"){p+=x.jumlah; pOrang.add(x.nama)}
+    if(x.jenis==="bayar_piutang"){p-=x.jumlah}
+  });
+  document.getElementById("totHutang").innerText=rupiah(Math.max(h,0));
+  document.getElementById("totPiutang").innerText=rupiah(Math.max(p,0));
+  document.getElementById("jmlHutang").innerText=hOrang.size+" orang";
+  document.getElementById("jmlPiutang").innerText=pOrang.size+" orang";
+
+  const box=document.getElementById("list");
+  if(!list.length){ box.innerHTML=`<p style="text-align:center;color:#94a3b8;font-size:12px">Belum ada catatan</p>`; return; }
+  box.innerHTML=list.map(x=>{
+    const j=JENIS[x.jenis];
+    const tgl=new Date(x.tanggal+"T00:00:00").toLocaleDateString("id-ID",{day:"2-digit",month:"short",year:"numeric"});
+    return `<div class="item">
+      <div><span class="chip" style="background:${j.warna}">${j.icon} ${j.label}</span>
+      <div style="font-weight:700;font-size:13px;margin-top:5px">${x.nama}</div>
+      <div style="font-size:11px;color:#64748b">${x.ket||""} • ${tgl}</div></div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-weight:800;font-size:13px;color:${x.jumlah?j.warna:"#1e293b"}">${x.jumlah?rupiah(x.jumlah):"-"}</div>
+        <button class="hapus" onclick="hapusCatatan('${x.id}')">🗑️ Hapus</button>
+      </div></div>`;
+  }).join("");
+}
+window.hapusCatatan=async(id)=>{
+  if(!confirm("Hapus catatan ini?")) return;
+  await remove(ref(db,"/catatan_harian/"+id));
+};
+</script>
+</body>
+</html>

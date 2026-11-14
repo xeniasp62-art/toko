@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Perbaiki Ikon</title><style>body{font-family:sans-serif;text-align:center;padding:20px}button{padding:14px;width:100%;margin:8px 0;border:none;border-radius:12px;background:#2563eb;color:#fff;font-weight:800}img{width:150px;border-radius:20px;border:1px solid #ddd}</style></head>
+<body>
+<h3>Perbaiki Ikon ARFA</h3>
+<p>Logo bos yang lama:</p>
+<img id="preview" src="img/icon-512.png"><br><br>
+<p id="info">Lagi ngecek ukuran...</p>
+<button onclick="buat(512,'icon-512.png')">⬇️ Simpan jadi icon-512.png (512x512 pas)</button>
+<button onclick="buat(192,'icon-192.png')">⬇️ Simpan jadi icon-192.png (192x192 pas)</button>
+<script>
+const img=document.getElementById("preview");
+img.onload=()=>{ document.getElementById("info").innerText="Ukuran asli foto bos: "+img.naturalWidth+" x "+img.naturalHeight+" - makanya ditolak Chrome, harusnya 192 / 512 pas"; };
+img.onerror=()=>{ document.getElementById("info").innerText="File img/icon-512.png GAK KETEMU! Cek nama foldernya."; };
+function buat(s,nama){
+  const c=document.createElement("canvas"); c.width=s; c.height=s;
+  const x=c.getContext("2d");
+  x.fillStyle="#fff"; x.fillRect(0,0,s,s);
+  x.drawImage(img,0,0,s,s);
+  const a=document.createElement("a"); a.download=nama; a.href=c.toDataURL("image/png"); a.click();
+}
+</script></body></html>

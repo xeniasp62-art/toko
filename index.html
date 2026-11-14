@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ARFA Toko</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2563eb">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" href="img/icon-192.png">
+<link rel="apple-touch-icon" href="img/icon-192.png">
+
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+body{background:#f1f5f9;min-height:100vh}
+header{background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;padding:18px 16px;display:flex;justify-content:space-between;align-items:center;padding-top:calc(18px + env(safe-area-inset-top))}
+.brand{font-weight:800;display:flex;gap:10px;align-items:center;font-size:18px}
+.container{padding:20px;max-width:900px;margin:0 auto}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
+.menu{background:#fff;border-radius:16px;padding:20px;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,.08);cursor:pointer;transition:.2s}
+.menu:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,.12)}
+.menu .material-icons{font-size:36px;color:#2563eb;margin-bottom:10px}
+.menu b{display:block;font-size:13px;color:#1e293b}
+.menu small{color:#64748b;font-size:11px}
+.card-welcome{background:linear-gradient(135deg,#2563eb,#1e40af);color:#fff;border-radius:16px;padding:20px}
+.install{margin-top:16px;background:#fff;color:#2563eb;padding:10px 14px;border-radius:10px;border:none;font-weight:700;width:100%;display:none;cursor:pointer}
+@media(max-width:600px){.grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><span class="material-icons">store</span> TOKO ARFA</div>
+</header>
+
+<div class="container">
+  <div class="card-welcome">
+    <h2 style="font-size:16px">Selamat Datang 👋</h2>
+    <p style="font-size:12px;opacity:.9;margin-top:4px">Jajan • Warung • Laporan dalam 1 aplikasi</p>
+    <button id="btnInstall" class="install">📲 Install Aplikasi</button>
+    <p id="installInfo" style="font-size:11px;margin-top:10px;opacity:.85;display:none">Di HP Android: klik titik 3 di Chrome > Tambahkan ke Layar Utama / Instal aplikasi</p>
+  </div>
+
+  <!-- KEGIATAN HARI INI -->
+  <div id="notifKegiatan" onclick="location.href='catatan.html'" style="display:none;background:#fff;border:2px solid #bfdbfe;border-radius:16px;padding:12px;margin-top:14px;cursor:pointer">
+    <div style="font-weight:800;color:#1e3a8a;font-size:13px">📝 Kegiatan Hari Ini (<span id="tglHariIni"></span>) : <span id="jmlKegiatan">0</span></div>
+    <div id="listKegiatan" style="font-size:12px;color:#334155;margin-top:6px;line-height:1.7"></div>
+    <div style="font-size:10px;color:#94a3b8;margin-top:6px">Klik buat buka Catatan Harian →</div>
+  </div>
+
+  <!-- NOTIF HUTANG / PIUTANG -->
+  <div id="notifHutang" onclick="location.href='catatan.html'" style="display:none;background:#fef2f2;border:2px solid #fecaca;border-radius:16px;padding:12px;margin-top:14px;cursor:pointer">
+    <div style="font-weight:800;color:#dc2626;font-size:13px">🔴 HUTANG BELUM LUNAS: <span id="dashHutang">Rp 0</span></div>
+    <div id="dashHutangOrang" style="font-size:11px;color:#7f1d1d;margin-top:2px"></div>
+    <div style="font-weight:800;color:#065f46;font-size:13px;margin-top:8px">🟢 PIUTANG BELUM DIBAYAR: <span id="dashPiutang">Rp 0</span></div>
+    <div id="dashPiutangOrang" style="font-size:11px;color:#065f46;margin-top:2px"></div>
+    <div style="font-size:10px;color:#94a3b8;margin-top:6px">Klik buat buka Catatan Harian →</div>
+  </div>
+  <button id="btnNotif" style="width:100%;padding:10px;border:2px dashed #93c5fd;background:#eff6ff;color:#2563eb;border-radius:12px;font-weight:700;font-size:12px;margin-top:12px;cursor:pointer">🔔 Aktifkan Notif HP</button>
+  <div id="toastNotif" style="display:none;background:#1e3a8a;color:#fff;padding:12px;border-radius:12px;font-size:12px;font-weight:700;margin-top:12px;text-align:center"></div>
+
+  <div class="grid">
+    <div class="menu" onclick="location.href='jajan.html'">
+      <span class="material-icons">point_of_sale</span>
+      <b>Jajan</b>
+      <small>Kasir jajan</small>
+    </div>
+    <div class="menu" onclick="location.href='warung.html'">
+      <span class="material-icons">shopping_cart</span>
+      <b>Aplikasi Warung</b>
+      <small>Stok &amp; kas</small>
+    </div>
+    <div class="menu" onclick="alert('Segera hadir')">
+      <span class="material-icons">receipt_long</span>
+      <b>Laporan</b>
+      <small>Log aktivitas</small>
+    </div>
+    <div class="menu" onclick="location.href='catatan.html'">
+      <span class="material-icons">note_alt</span>
+      <b>Catatan Harian</b>
+      <small>Hutang &amp; Piutang</small>
+    </div>
+  </div>
+
+  <p style="text-align:center;margin-top:30px;color:#94a3b8;font-size:11px">ARFA v3.0 • PWA Standalone</p>
+</div>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').then(() => {
+      console.log('SW OK');
+    }).catch(err => console.log('SW GAGAL:', err));
+  });
+}
+let deferredPrompt;
+const btnInstall = document.getElementById('btnInstall');
+const installInfo = document.getElementById('installInfo');
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  btnInstall.style.display = 'block';
+});
+window.addEventListener('appinstalled', () => {
+  btnInstall.style.display = 'none';
+  deferredPrompt = null;
+});
+btnInstall.addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  if (outcome === 'accepted') btnInstall.style.display = 'none';
+  deferredPrompt = null;
+});
+setTimeout(() => {
+  if (!deferredPrompt) installInfo.style.display = 'block';
+}, 3000);
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+const firebaseConfig={apiKey:"AIzaSyDd0s73-qW2uiOlBWR-afybFZzMafCHeSo",authDomain:"arfa-c7dee.firebaseapp.com",databaseURL:"https://arfa-c7dee-default-rtdb.firebaseio.com",projectId:"arfa-c7dee"};
+const app=initializeApp(firebaseConfig); const db=getDatabase(app);
+const rupiah=n=>"Rp "+Number(n||0).toLocaleString("id-ID");
+// Tanggal hari ini pakai waktu HP bos, bukan UTC, biar gak geser 1 hari
+const d=new Date();
+const hariIni=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const JENIS_ICON={kegiatan:"📝",hutang:"🔴",bayar_hutang:"✅",piutang:"🟢",bayar_piutang:"💰"};
+
+async function kirimNotif(h,p,keg){
+  const pesan=`Hari ini: ${keg} kegiatan | Hutang: ${rupiah(h)} | Piutang: ${rupiah(p)}`;
+  try{
+    if("serviceWorker" in navigator && Notification.permission==="granted"){
+      const reg=await navigator.serviceWorker.ready;
+      await reg.showNotification("TOKO ARFA - Hari Ini",{body:pesan, icon:"img/icon-192.png"});
+      return;
+    }
+  }catch(e){}
+  try{ if(Notification.permission==="granted"){ new Notification("TOKO ARFA",{body:pesan}); return; } }catch(e){}
+  const t=document.getElementById("toastNotif");
+  t.innerText="🔔 "+pesan; t.style.display="block";
+  if(navigator.vibrate) navigator.vibrate([100,50,100]);
+  setTimeout(()=>t.style.display="none",6000);
+}
+
+onValue(ref(db,"/catatan_harian"), snap=>{
+  if(!snap.exists()) return;
+  const semua=Object.values(snap.val());
+  let h=0,p=0; const hMap={}, pMap={};
+  semua.forEach(x=>{
+    if(x.jenis==="hutang"){h+=x.jumlah; hMap[x.nama]=(hMap[x.nama]||0)+x.jumlah}
+    if(x.jenis==="bayar_hutang"){h-=x.jumlah; hMap[x.nama]=(hMap[x.nama]||0)-x.jumlah}
+    if(x.jenis==="piutang"){p+=x.jumlah; pMap[x.nama]=(pMap[x.nama]||0)+x.jumlah}
+    if(x.jenis==="bayar_piutang"){p-=x.jumlah; pMap[x.nama]=(pMap[x.nama]||0)-x.jumlah}
+  });
+  h=Math.max(h,0); p=Math.max(p,0);
+
+  // KEGIATAN HARI INI: semua jenis, tapi tanggalnya harus hari ini
+  const hariIniList=semua.filter(x=>x.tanggal===hariIni).sort((a,b)=>(b.waktu||0)-(a.waktu||0));
+  document.getElementById("tglHariIni").innerText=d.toLocaleDateString("id-ID",{day:"2-digit",month:"short",year:"numeric"});
+  if(hariIniList.length){
+    document.getElementById("notifKegiatan").style.display="block";
+    document.getElementById("jmlKegiatan").innerText=hariIniList.length;
+    document.getElementById("listKegiatan").innerHTML=hariIniList.map(x=>`${JENIS_ICON[x.jenis]||"📝"} <b>${x.nama}</b>${x.jumlah?" - "+rupiah(x.jumlah):""}${x.ket?" <span style='color:#64748b'>• "+x.ket+"</span>":""}`).join("<br>");
+  } else {
+    document.getElementById("notifKegiatan").style.display="block";
+    document.getElementById("jmlKegiatan").innerText="0";
+    document.getElementById("listKegiatan").innerHTML="<span style='color:#94a3b8'>Belum ada catatan hari ini, klik buat nambah →</span>";
+  }
+
+  if(h===0 && p===0){
+    document.getElementById("notifHutang").style.display="none";
+  } else {
+    document.getElementById("notifHutang").style.display="block";
+    document.getElementById("dashHutang").innerText=rupiah(h);
+    document.getElementById("dashPiutang").innerText=rupiah(p);
+    document.getElementById("dashHutangOrang").innerText=Object.entries(hMap).filter(([k,v])=>v>0).map(([k,v])=>k+" "+rupiah(v)).join(" • ")||"Lunas semua ✅";
+    document.getElementById("dashPiutangOrang").innerText=Object.entries(pMap).filter(([k,v])=>v>0).map(([k,v])=>k+" "+rupiah(v)).join(" • ")||"Lunas semua ✅";
+  }
+
+  if(localStorage.getItem("notifTerakhir")!==hariIni){
+    localStorage.setItem("notifTerakhir",hariIni);
+    kirimNotif(h,p,hariIniList.length);
+  }
+});
+
+document.getElementById("btnNotif").onclick=async()=>{
+  if(!("Notification" in window)){ alert("HP / browser ini gak support notif"); return; }
+  const izin=await Notification.requestPermission();
+  alert("Izin notif: "+izin);
+  if(izin==="granted"){ document.getElementById("btnNotif").style.display="none"; kirimNotif(100000,0,1); }
+};
+if(typeof Notification!=="undefined" && Notification.permission==="granted") document.getElementById("btnNotif").style.display="none";
+</script>
+</body>
+</html>

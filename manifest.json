@@ -1,6 +1,6 @@
 {
   "name": "TOKO ARFA",
-  "short_name": "ARFA",
+  "short_name": "Toko",
   "description": "Jajan, Warung, Catatan Harian dalam 1 aplikasi",
   "start_url": "./index.html",
   "scope": "./",

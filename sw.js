@@ -1,5 +1,5 @@
 const CACHE = "arfa-v4";
-const FILES = ["./", "./index.html", "./catatan.html", "./manifest.json", "./img/icon-192.png"];
+const FILES = ["./", "./index.html", "./warung.html", "./manifest.json", "./img/icon-192.png"];
 
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));

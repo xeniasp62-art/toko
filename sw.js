@@ -1,4 +1,4 @@
-const CACHE = "arfa-v7";
+const CACHE = "arfa-v4";
 const FILES = ["./", "./index.html", "./warung.html", "./manifest.json", "./img/icon-192.png"];
 
 self.addEventListener("install", e => {

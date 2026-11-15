@@ -19,8 +19,12 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
 body{background:#f1f5f9;min-height:100vh}
-header{background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;padding:18px 16px;display:flex;justify-content:space-between;align-items:center;padding-top:calc(18px + env(safe-area-inset-top))}
-.brand{font-weight:800;display:flex;gap:10px;align-items:center;font-size:18px}
+header{background:linear-gradient(to right,#1e90ff,#0f3057);color:white;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.15);}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;}
+.brand img{width:36px;height:36px;border-radius:50%;background:#fff;padding:2px;}
+.header-right{display:flex;align-items:center;gap:10px;}
+.role-badge{background:rgba(255,255,255,.18);padding:5px 10px;border-radius:20px;font-size:10px;font-weight:600;}
+.menu-btn{cursor:pointer;font-size:22px;}
 .container{padding:20px;max-width:900px;margin:0 auto}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
 .menu{background:#fff;border-radius:16px;padding:20px;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,.08);cursor:pointer;transition:.2s}
@@ -34,9 +38,15 @@ header{background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;padding:18p
 </style>
 </head>
 <body>
+  
 <header>
-  <div class="brand"><span class="material-icons">store</span> TOKO ARFA</div>
+  <div class="brand">
+    <img src="img/icon-192.png" alt="Koperasi ARFA">
+    <div>TOKO ARFA</div>
+  </div>
+  
 </header>
+
 
 <div class="container">
   <div class="card-welcome">
